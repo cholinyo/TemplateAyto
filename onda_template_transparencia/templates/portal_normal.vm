@@ -1,0 +1,260 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+
+#parse ($init)
+
+#set ($change_language_url = $portletURLFactory.create($request, "82", $page.getPlid(), "ACTION_PHASE"))
+$change_language_url.setWindowState("normal")
+$change_language_url.setPortletMode("view")
+$change_language_url.setParameter("struts_action", "/language/view")
+$change_language_url.setParameter("redirect", "$portalUtil.getCurrentURL($request)")
+#set ($languageCA = $change_language_url+"&languageId=ca_ES")
+#set ($languageES = $change_language_url+"&languageId=es_ES")
+#set ($comunidad = $portalUtil.getCurrentURL($request).substring(5,10)) ##miramos si es admin (administracion-electronica) o guest
+
+#if ($locale == "ca_ES")
+  #set ($busqueda = "Recerca")
+#else 
+  #set ($busqueda = "Búsqueda")
+#end 
+
+#if ($locale == "ca_ES")
+  <html dir="#language ("lang.dir")" xmlns="http://www.w3.org/1999/xhtml" xml:lang="ca">
+#else
+  <html dir="#language ("lang.dir")" xmlns="http://www.w3.org/1999/xhtml" xml:lang="es">
+#end
+
+
+<head>
+	<title>$company_name - $the_title</title>
+
+	$theme.include($top_head_include)
+
+	#css ($css_main_file)
+	#js ($js_main_file)
+
+	<script type="text/javascript">
+		$page_javascript_1
+		$page_javascript_2
+		$page_javascript_3
+	</script>
+
+        <script type="text/javascript" src="$javascript_folder/lightbox/javascript/jquery.lightbox-0.5.js"></script>
+        <link rel="stylesheet" type="text/css" href="$javascript_folder/lightbox/css/jquery.lightbox-0.5.css" media="screen" />
+
+	<script type="text/javascript">
+	    jQuery(function() {
+		jQuery('div.journal-content-article a[@href*=image_gallery]:not(.noimg) img').parent().lightBox('$javascript_folder/lightbox/images/');
+	    });
+        </script>  
+
+	<script type="text/javascript">
+          jQuery(function() {
+                jQuery("div.journal-content-article a[@href*=get_file]:not(.noimg)").append('<img style="margin: 0px; padding: 0px; margin-left:0.5em;" src="$images_folder/enlace_pdf.png" alt="enlace pdf"/>');
+                jQuery("div.journal-content-article a[@href*=http://]:not(.noimg)").append('<img style="margin: 0px; padding: 0px; margin-left:0.5em;" src="$images_folder/enlace_externo.png" alt="enlace externo"/>');
+          }); 
+	</script>
+
+	<script type="text/javascript"> <!-- En explorer daba un error al cerrar la página, por los videos -->
+	   jQuery(window).unload(function () {
+		jQuery('div.video').each(function(i) {
+		    jQuery(this).remove();
+		});
+	   });
+	</script>
+
+
+        <!--<style> 
+          ##ie6_png_fix()
+        </style>-->
+
+
+
+	##if ($company_logo != "")
+		##<style type="text/css">
+		##	#banner .logo {
+		##		padding: 0.52em 0.6em 0.53em;
+		##	}
+
+		##	#banner .logo a {
+		##		background: url($company_logo) no-repeat;
+		##		display: block;
+		##		font-size: 0;
+		##		height: ${company_logo_height}px;
+		##		text-indent: -9999em;
+		##		width: ${company_logo_width}px;
+		##	}
+
+		##	#ie6_png_fix()
+		##</style>
+	##end
+</head>
+
+<body class="$css_class">
+
+$theme.include($top_messages_include)
+
+<div id="wrapper">
+	<div id="banner">
+                <a href="/web/guest" style="float:left">
+                  <img src="$images_folder/cabecera_letra.gif" alt="Enlace cabecera" />
+                </a>
+		<!--h1 class="logo">
+			<a class="png" href="$company_url">$company_name</a>
+		</h1-->
+
+		##esto es lo que aparece para seleccionar las opciones de usuario, le pongo el if para que lo saque sólo si estamos logados
+                #if ($show_my_account)
+  		  #parse ("$full_templates_path/dock.vm")
+		#end
+
+                ##parse ("$full_templates_path/dock.vm")
+
+		##if ($update_available_url)
+		 <!--<div class="popup-alert-notice">
+		 	<a class="update-available" href="$update_available_url">#language ("updates-are-available-for-liferay")</a>
+	  	 </div>-->
+		##end
+	</div>
+
+        <div class="divStyle">
+
+        <div id="od_top"> 
+           <img class="esquina_sup_izq" src="$images_folder/ai2.png" alt="esquina superior izquierda" />
+           <img class="esquina_sup_der" src="$images_folder/ad2.png" alt="esquina superior derecha" />
+        </div>
+
+        <div id="od_contenido"> 
+           <div id="od_idiomas">
+   	     <a class="enlaceBlanco" href="$languageCA">Valencià</a> |
+	     <a class="enlaceBlanco" href="$languageES">Castellano</a>
+	   </div>
+           <div id="od_buscador" class="search">
+	     ##$theme.journalContentSearch()
+	     <form action="/web/guest/resultados-busqueda" id="cse-search-box">
+ 	       <input type="hidden" name="cx" value="007684710617398727954:5j8imo8ypno" />
+	       <input type="hidden" name="cof" value="FORID:10" />
+	       <input type="hidden" name="ie" value="UTF-8" />
+	       <label for="campo-busqueda"></label><input id="campo-busqueda" type="text" name="q" size="35" value="$busqueda..." onfocus="if (this.value == '$busqueda...') { this.value = ''; }" onblur="if (this.value == '') { this.value = '$busqueda...'; }"/>
+	       <!--<input type="submit" name="sa" value="Buscar" />-->
+               <input type="image" src="$images_folder/search.gif" alt="$busqueda" title="$busqueda"  />
+	    </form>
+           </div>	
+           <div id="od_resto">
+              #if ($show_my_account)
+                <!--<a class="enlaceBlanco" href="/user/$user.getScreenName()/home" accesskey="2"> -->
+                <a class="enlaceBlanco" href="/group/empleados/empleados">
+		#if ($locale == "ca_ES")
+                  Pàgina personal
+                #else 
+		  Página personal
+                #end 
+                </a>
+                | 
+              #end               
+	      <a class="enlaceBlanco" href="/web/guest" accesskey="2">  
+		#if ($locale == "ca_ES")
+                  Inici
+                #else 
+		  Inicio
+                #end 
+	      </a>|              
+              <!--<a style="background-color:#a23d05; color:#fff; font-weight: bold; text-decoration: none" href="/web/guest/faq"> FAQ </a>| 
+	      BOH | 
+              Normativa | -->
+              <!--<a class="enlaceBlanco" href="/web/administracion-electronica/principal">SAT</a> |-->
+              <a class="enlaceBlanco" href="/web/guest/buzon-sugerencias" accesskey="3">
+                #if ($locale == "ca_ES") 
+                  Bústia 
+                #else
+                  Buzón
+                #end
+	      </a> |
+              #if ($comunidad == "admin") 
+                <a class="enlaceBlanco" href="/web/administracion-electronica/FAQ">FAQ</a> 
+              #else
+                <a class="enlaceBlanco" href="/web/guest/mapa-web" accesskey="1">Mapa Web</a> 
+	        |
+                <a class="enlaceBlanco" href="/web/guest/sindicacion/-/journal/rss/10124/24568?doAsGroupId=10124&refererPlid=10127">RSS</a> 
+              #end
+	   </div>
+	</div>
+
+        <div id="od_bottom"> 
+           <img class="esquina_inf_izq" src="$images_folder/di2.png" alt="esquina inferior izquierda" />
+           <img class="esquina_inf_der" src="$images_folder/dd2.png" alt="esquina inferior derecha" />
+        </div>
+
+	##if ($has_navigation)
+		##parse ("$full_templates_path/navigation.vm")
+	##end
+
+	#if ($selectable)
+		$theme.include($content_include)
+	#else
+		$portletDisplay.recycle()
+
+		$portletDisplay.setTitle($the_title)
+
+		$theme.wrapPortlet("portlet.vm", $content_include)
+	#end
+
+	</div>
+
+        <div id="footer">
+          <br/>
+	    #if ($locale == "ca_ES")
+               Ajuntament d'Onda - El Pla, 1 - C.P.: 12200 - CIF: P1208400J - Telèfon: 964 60 00 50 - N. Reg. Entitat Local 01120846
+            #else 
+	       Ayuntamiento de Onda - El Pla, 1 - C.P.: 12200 - CIF: P1208400J - Teléfono: 964 60 00 50 - Nº Reg. Entidad Local 01120846
+            #end 
+        </div>
+        <div style="text-align: right;">
+           <a href="/c/portal/login">
+                #if ($locale == "ca_ES") 
+                  Accés 
+                #else
+                  Acceso
+                #end
+           </a>           
+           |
+           <a href="/web/guest/aviso-legal">
+                #if ($locale == "ca_ES") 
+                  Avís legal 
+                #else
+                  Aviso legal
+                #end
+           </a>           
+           |
+           <a href="/web/guest/politica-general-de-proteccion-de-datos">
+                #if ($locale == "ca_ES") 
+                  Protecció de dades 
+                #else
+                  Protección de datos
+                #end
+           </a>   
+           |
+           <a href="/web/guest/accesibilidad" accesskey="0">
+                #if ($locale == "ca_ES") 
+                  Accesibilitat
+                #else
+                  Accesibilidad
+                #end
+           </a>   
+           <!--|
+           <a target="_blank" href="http://onda.computalia.com">
+                Web anterior   
+           </a>-->  
+
+        </div>
+</div>
+
+<div style="width:700px; padding:5px; margin: auto; overflow: hidden;">
+<a style="float: left" href="http://www.mityc.es" target="_blank"><img src="$images_folder/logo_mityc.jpg" alt="icono ministerio de industria, turismo y comercio" /> </a>
+<a style="float: right" href="http://www.map.es" target="_blank"><img src="$images_folder/logo_map.jpg" alt="icono ministerio de administraciones públicas" /> </a>
+<a href="http://www.planavanza.es" target="_blank"><img src="$images_folder/logo_plan_avanza.gif" alt="icono ministerio de industria, turismo y comercio" /> </a>
+</div>
+$theme.include($bottom_include)
+
+</body>
+
+</html>
